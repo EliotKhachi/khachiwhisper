@@ -1,0 +1,8 @@
+.venv/
+dist/
+app/cache/
+Khachiwhisper.app/
+__pycache__/
+*.log
+config.json
+.DS_Store
