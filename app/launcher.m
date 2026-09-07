@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
         }
         chdir([workdir fileSystemRepresentation]);
         setenv("PYTHONUNBUFFERED", "1", 1);
+        setenv("PYTHONDONTWRITEBYTECODE", "1", 1);   // never write into the sealed bundle
 
         char *args[argc + 3];
         args[0] = (char *)[py fileSystemRepresentation];

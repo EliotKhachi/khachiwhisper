@@ -13,6 +13,8 @@ a pynput event tap for the global hotkey; sounddevice for the mic; MLX for the m
 import json
 import os
 import signal
+import sys as _sys
+_sys.dont_write_bytecode = True   # the app bundle is code-signed; never write .pyc files into it
 import subprocess
 import sys
 import threading

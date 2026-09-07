@@ -59,6 +59,9 @@ cp app/Info.plist "$APP/Contents/"
 cp app/Khachiwhisper.icns "$RES/"
 echo "APPL????" > "$APP/Contents/PkgInfo"
 
+echo "Precompiling (so Python never needs to write into the signed bundle)…"
+"$PY" -m compileall -q "$RES/python/lib/python3.13" "$RES/khachiwhisper.py" "$RES/hush.py" "$RES/shims" >/dev/null 2>&1 || true
+
 echo "Signing ($SIGN)…"
 find "$RES/python" -type f \( -name "*.so" -o -name "*.dylib" -o -perm -u+x \) -print0 \
   | xargs -0 -n 50 codesign --force --sign "$SIGN" "${SIGN_ARGS[@]}" 2>/dev/null || true
