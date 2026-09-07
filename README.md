@@ -137,3 +137,7 @@ gh release create v1.0 dist/Khachiwhisper-1.0.dmg --title "Khachiwhisper 1.0"
 Bump `CFBundleShortVersionString` in `app/Info.plist` for each release. The app is ad-hoc signed;
 proper Developer ID signing + notarization (Apple developer account, $99/yr) would remove the
 "Open Anyway" step for users.
+
+## License
+
+MIT. The bundled models keep their own licenses: Cohere Transcribe and Whisper are Apache 2.0, Parakeet is CC-BY-4.0.
