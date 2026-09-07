@@ -992,8 +992,8 @@ class SettingsWindow:
         self.model_select = hush.select(card, [(MODELS[k]["name"], k) for k in MODEL_ORDER], CFG["model"],
                                         *self._rect(self._right(card, 0, 240)), on_change=c.set_model)
         y += h + 12
-        hush.label(pane, "Picking a model that isn't downloaded yet fetches it first. Keep the ones you use; "
-                         "remove the rest to free disk space.",
+        hush.label(pane, "Only downloaded models can be made active; use Download in the list to add one. "
+                         "Keep the ones you use, remove the rest to free disk space.",
                    self.PAD, y, w - self.PAD * 2, 34, "caption", hush.C.TEXT2, wrap=True)
         y += 46
         card, h = self._card(pane, y, w, len(MODEL_ORDER))
@@ -1102,7 +1102,13 @@ class SettingsWindow:
             self.lang_select.items = items
             self.lang_select.value = CFG["language"]
             self.lang_select.setNeedsDisplay_(True)
-        if self.model_select.value != CFG["model"]:
+        model_items = []
+        for k in MODEL_ORDER:
+            have, busy = mm.is_downloaded(k), k in mm.progress or (k == mm.key and mm.phase == "downloading")
+            suffix = "  · downloading" if busy else "" if have else "  · not downloaded"
+            model_items.append((MODELS[k]["name"] + suffix, k, have and not busy))
+        if self.model_select.items != model_items or self.model_select.value != CFG["model"]:
+            self.model_select.items = model_items
             self.model_select.value = CFG["model"]
             self.model_select.setNeedsDisplay_(True)
 
@@ -1347,6 +1353,10 @@ class Controller:
 
     def set_model(self, key):
         if key == CFG["model"] and self.models.key == key:
+            return
+        if not self.models.is_downloaded(key):
+            log(f"model {key} is not downloaded — use Download first")
+            self.settings.refresh()
             return
         CFG["model"] = key
         if CFG["language"] not in MODELS[key]["langs"]:

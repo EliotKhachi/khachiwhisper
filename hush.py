@@ -357,9 +357,9 @@ class Select(Interactive):
 
     @objc.python_method
     def current_title(self):
-        for t, v in self.items:
-            if v == self.value:
-                return t
+        for it in self.items:          # (title, value) or (title, value, enabled)
+            if it[1] == self.value:
+                return it[0]
         return "—"
 
     def drawRect_(self, rect):
@@ -382,11 +382,14 @@ class Select(Interactive):
     def click(self):
         menu = NSMenu.alloc().init()
         menu.setAutoenablesItems_(False)
-        for t, v in self.items:
+        for it in self.items:
+            t, v = it[0], it[1]
+            enabled = bool(it[2]) if len(it) > 2 else True
             mi = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(t, "pick:", "")
             mi.setTarget_(self)
             mi.setRepresentedObject_(v)
             mi.setState_(1 if v == self.value else 0)
+            mi.setEnabled_(enabled)
             menu.addItem_(mi)
         menu.popUpMenuPositioningItem_atLocation_inView_(None, NSMakePoint(0, self.bounds().size.height + 4), self)
 
